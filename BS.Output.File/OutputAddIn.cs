@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
@@ -37,8 +38,8 @@ namespace BS.Output.File
     {
 
       Output output = new Output(Name,
-                                String.Empty,
-                                String.Empty);
+                                 "Screenshot",
+                                 String.Empty);
 
       return EditOutput(Owner, output);
 
@@ -90,9 +91,28 @@ namespace BS.Output.File
     {
       try
       {
-        
-        //  TODO
 
+        using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+        {
+
+          if (saveFileDialog.ShowDialog() == DialogResult.OK)
+          {
+
+            V3.FileData fileData = V3.FileHelper.GetFileData(Output.FileName, Output.FileFormat, ImageData);
+
+            using (FileStream file = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.ReadWrite))
+            {
+              file.Write(fileData.FileBytes, 0, fileData.FileBytes.Length);
+              file.Close();
+            }
+
+          }
+          else
+          {
+            return new V3.SendResult(V3.Result.Canceled);
+          }
+        }
+       
         return new V3.SendResult(V3.Result.Success);
 
       }
