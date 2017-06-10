@@ -26,6 +26,15 @@
         <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
+      <Label Grid.Column="0">Directory</Label>
+      <TextBox x:Name="DirectoryTextBox" Grid.Column="1" VerticalContentAlignment="Center" Margin="0,0,34,0" />
+      <Button x:Name="SelectDirectory"  Grid.Column="1" Content="..." Width="25" HorizontalAlignment="Right" Click="SelectDirectory_Click" />
+    </Grid>
+    <Grid Margin="4">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
       <Label Grid.Column="0">File name</Label>
       <TextBox x:Name="FileNameTextBox" Grid.Column="1" VerticalContentAlignment="Center" Margin="0,0,94,0" ContextMenuService.IsEnabled="False" />
       <Button x:Name="FileNameReplacement"  Grid.Column="1" Content="%" Width="25" HorizontalAlignment="Right" Margin="0,0,68,0" Click="FileNameReplacement_Click">
@@ -34,6 +43,13 @@
         </Button.ContextMenu>
       </Button>
       <ComboBox x:Name="FileFormatList" Grid.Column="1" Width="60" HorizontalAlignment="Right" SelectedValuePath="Tag" />
+    </Grid>
+    <Grid Margin="4">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <CheckBox x:Name="SaveAutomaticallyCheckBox" Grid.Column="1" Content="Save automatically without prompting the directory" />
     </Grid>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" >
       <Button Width="80" Height="24" Content="OK" Margin="4" Click="OK_Click" />

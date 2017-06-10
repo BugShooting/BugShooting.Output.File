@@ -32,12 +32,15 @@ namespace BS.Output.File
       }
 
       NameTextBox.Text = output.Name;
+      DirectoryTextBox.Text = output.Directory;
       FileNameTextBox.Text = output.FileName;
       FileFormatList.SelectedValue = output.FileFormat;
       if (FileFormatList.SelectedValue is null)
       {
         FileFormatList.SelectedIndex = 0;
       }
+
+      SaveAutomaticallyCheckBox.IsChecked = output.SaveAutomatically;
       
     }
 
@@ -45,7 +48,12 @@ namespace BS.Output.File
     {
       get { return NameTextBox.Text; }
     }
-      
+
+    public string Directory
+    {
+      get { return DirectoryTextBox.Text; }
+    }
+
     public string FileName
     {
       get { return FileNameTextBox.Text; }
@@ -54,6 +62,27 @@ namespace BS.Output.File
     public string FileFormat
     {
       get { return FileFormatList.SelectedValue.ToString(); }
+    }
+
+    public bool SaveAutomatically
+    {
+      get { return SaveAutomaticallyCheckBox.IsChecked.Value; }
+    }
+
+    private void SelectDirectory_Click(object sender, RoutedEventArgs e)
+    {
+
+      using (System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog())
+      {
+
+        folderBrowserDialog.SelectedPath = DirectoryTextBox.Text;
+
+        if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+          DirectoryTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+      }
+
     }
 
     private void FileNameReplacement_Click(object sender, RoutedEventArgs e)

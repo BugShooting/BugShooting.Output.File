@@ -5,21 +5,32 @@
   {
     
     string name;
+    string directory;
     string fileName;
     string fileFormat;
+    bool saveAutomatically;
 
     public Output(string name,
+                  string directory,
                   string fileName,
-                  string fileFormat)
+                  string fileFormat,
+                  bool saveAutomatically)
     {
       this.name = name;
+      this.directory = directory;
       this.fileName = fileName;
       this.fileFormat = fileFormat;
+      this.saveAutomatically = saveAutomatically;
     }
     
     public string Name
     {
       get { return name; }
+    }
+
+    public string Directory
+    {
+      get { return directory; }
     }
 
     public string Information
@@ -35,6 +46,11 @@
     public string FileFormat
     {
       get { return fileFormat; }
+    }
+
+    public bool SaveAutomatically
+    {
+      get { return saveAutomatically; }
     }
 
   }
