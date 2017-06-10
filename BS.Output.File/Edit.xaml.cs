@@ -34,7 +34,11 @@ namespace BS.Output.File
       NameTextBox.Text = output.Name;
       FileNameTextBox.Text = output.FileName;
       FileFormatList.SelectedValue = output.FileFormat;
-     
+      if (FileFormatList.SelectedValue is null)
+      {
+        FileFormatList.SelectedIndex = 0;
+      }
+      
     }
 
     public string OutputName
