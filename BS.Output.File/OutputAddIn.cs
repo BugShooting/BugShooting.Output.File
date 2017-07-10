@@ -96,7 +96,7 @@ namespace BS.Output.File
                         Convert.ToBoolean(OutputValues["SaveAutomatically", false.ToString()].Value));
     }
 
-    protected async override Task<V3.SendResult> Send(Output Output, V3.ImageData ImageData)
+    protected async override Task<V3.SendResult> Send(IWin32Window Owner, Output Output, V3.ImageData ImageData)
     {
       try
       {
@@ -129,7 +129,7 @@ namespace BS.Output.File
             saveFileDialog.Filter = string.Join("|", filter);
             saveFileDialog.FilterIndex = fileFormats.IndexOf(fileFormat) + 1;
 
-            if (saveFileDialog.ShowDialog() != DialogResult.OK)
+            if (saveFileDialog.ShowDialog(Owner) != DialogResult.OK)
               return new V3.SendResult(V3.Result.Canceled);
 
             fileFormat = fileFormats[saveFileDialog.FilterIndex - 1];
