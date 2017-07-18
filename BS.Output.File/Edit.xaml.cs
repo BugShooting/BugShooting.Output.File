@@ -71,6 +71,8 @@ namespace BS.Output.File
 
         if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
+
+          XXXXXXXXXXXXXXXXXXXXXXXXXXXX
           Directory = folderBrowserDialog.SelectedPath;
         }
       }
