@@ -43,6 +43,10 @@ namespace BS.Output.File
 
       SaveAutomaticallyCheckBox.IsChecked = output.SaveAutomatically;
 
+      NameTextBox.TextChanged += ValidateData;
+      FileFormatComboBox.SelectionChanged += ValidateData;
+      ValidateData(null, null);
+
       DirectoryTextBox.Focus();
 
     }
