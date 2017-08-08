@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace BS.Output.File
 {
@@ -14,8 +10,6 @@ namespace BS.Output.File
     public Edit(Output output)
     {
       InitializeComponent();
-
-      this.DataContext = this;
 
       foreach (string fileNameReplacement in V3.FileHelper.GetFileNameReplacements())
       {
@@ -31,35 +25,52 @@ namespace BS.Output.File
         ComboBoxItem item = new ComboBoxItem();
         item.Content = fileFormat;
         item.Tag = fileFormat;
-        FileFormatList.Items.Add(item);
+        FileFormatComboBox.Items.Add(item);
       }
 
-      OutputName = output.Name;
-      Directory = output.Directory;
-      FileName = output.FileName;
+      NameTextBox.Text = output.Name;
+      DirectoryTextBox.Text = output.Directory;
+      FileNameTextBox.Text = output.FileName;
 
       if (fileFormats.Contains(output.FileFormat))
       {
-        FileFormat = output.FileFormat;
+        FileFormatComboBox.SelectedValue = output.FileFormat;
       }
       else
       {
-        FileFormat = fileFormats.First();
+        FileFormatComboBox.SelectedValue = fileFormats.First();
       }
 
-      SaveAutomatically = output.SaveAutomatically;
+      SaveAutomaticallyCheckBox.IsChecked = output.SaveAutomatically;
+
+      DirectoryTextBox.Focus();
 
     }
 
-    public string OutputName { get; set; }
+    public string OutputName
+    {
+      get { return NameTextBox.Text; }
+    }
+      
+    public string Directory
+    {
+      get { return DirectoryTextBox.Text; }
+    }
   
-    public string Directory { get; set; }
+    public string FileName
+    {
+      get { return FileNameTextBox.Text; }
+    }
   
-    public string FileName { get; set; }
-  
-    public string FileFormat { get; set; }
+    public string FileFormat
+    {
+      get { return (string)FileFormatComboBox.SelectedValue; }
+    }
    
-    public bool SaveAutomatically { get; set; }
+    public bool SaveAutomatically
+    {
+      get { return SaveAutomaticallyCheckBox.IsChecked.Value; }
+    }
   
     private void SelectDirectory_Click(object sender, RoutedEventArgs e)
     {
@@ -71,9 +82,7 @@ namespace BS.Output.File
 
         if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
-
-          XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          Directory = folderBrowserDialog.SelectedPath;
+          DirectoryTextBox.Text = folderBrowserDialog.SelectedPath;
         }
       }
 
@@ -103,8 +112,8 @@ namespace BS.Output.File
 
     private void ValidateData(object sender, RoutedEventArgs e)
     {
-      OK.IsEnabled = !Validation.GetHasError(NameTextBox) &&
-                     !Validation.GetHasError(FileFormatList);
+      OK.IsEnabled = Validation.IsValid(NameTextBox) &&
+                     Validation.IsValid(FileFormatComboBox);
     }
 
     private void OK_Click(object sender, RoutedEventArgs e)
