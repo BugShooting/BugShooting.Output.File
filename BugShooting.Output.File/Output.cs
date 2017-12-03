@@ -1,4 +1,6 @@
-﻿namespace BS.Output.File
+﻿using BS.Plugin.V3.Output;
+
+namespace BugShooting.Output.File
 {
 
   public class Output: IOutput 

@@ -4,10 +4,13 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using BS.Plugin.V3.Output;
+using BS.Plugin.V3.Common;
+using BS.Plugin.V3.Utilities;
 
-namespace BS.Output.File
+namespace BugShooting.Output.File
 {
-  public class OutputAddIn: V3.OutputAddIn<Output>
+  public class OutputPlugin: OutputPlugin<Output>
   {
 
     protected override string Name
@@ -72,42 +75,42 @@ namespace BS.Output.File
 
     }
 
-    protected override OutputValueCollection SerializeOutput(Output Output)
+    protected override OutputValues SerializeOutput(Output Output)
     {
 
-      OutputValueCollection outputValues = new OutputValueCollection();
+      OutputValues outputValues = new OutputValues();
 
-      outputValues.Add(new OutputValue("Name", Output.Name));
-      outputValues.Add(new OutputValue("Directory", Output.Directory));
-      outputValues.Add(new OutputValue("FileName", Output.FileName));
-      outputValues.Add(new OutputValue("FileFormat", Output.FileFormat));
-      outputValues.Add(new OutputValue("SaveAutomatically", Output.SaveAutomatically.ToString()));
+      outputValues.Add("Name", Output.Name);
+      outputValues.Add("Directory", Output.Directory);
+      outputValues.Add("FileName", Output.FileName);
+      outputValues.Add("FileFormat", Output.FileFormat);
+      outputValues.Add("SaveAutomatically", Output.SaveAutomatically.ToString());
 
       return outputValues;
       
     }
 
-    protected override Output DeserializeOutput(OutputValueCollection OutputValues)
+    protected override Output DeserializeOutput(OutputValues OutputValues)
     {
-      return new Output(OutputValues["Name", this.Name].Value,
-                        OutputValues["Directory", ""].Value,
-                        OutputValues["FileName", "Screenshot"].Value,
-                        OutputValues["FileFormat", ""].Value,
-                        Convert.ToBoolean(OutputValues["SaveAutomatically", false.ToString()].Value));
+      return new Output(OutputValues["Name", this.Name],
+                        OutputValues["Directory", ""],
+                        OutputValues["FileName", "Screenshot"],
+                        OutputValues["FileFormat", ""],
+                        Convert.ToBoolean(OutputValues["SaveAutomatically", false.ToString()]));
     }
 
-    protected async override Task<V3.SendResult> Send(IWin32Window Owner, Output Output, V3.ImageData ImageData)
+    protected async override Task<SendResult> Send(IWin32Window Owner, Output Output, ImageData ImageData)
     {
       try
       {
 
         string fileFormat = Output.FileFormat;
-        string fileName = V3.FileHelper.GetFileName(Output.FileName, fileFormat, ImageData); ;
+        string fileName = FileHelper.GetFileName(Output.FileName,  ImageData); ;
         string filePath;
 
         if (Output.SaveAutomatically)
         {
-          filePath = Path.Combine(Output.Directory, fileName + "." + V3.FileHelper.GetFileExtention(fileFormat));
+          filePath = Path.Combine(Output.Directory, fileName + "." + FileHelper.GetFileExtention(fileFormat));
         }
         else
         {
@@ -115,7 +118,7 @@ namespace BS.Output.File
           using (SaveFileDialog saveFileDialog = new SaveFileDialog())
           {
 
-            List<string> fileFormats = V3.FileHelper.GetFileFormats();
+            List<string> fileFormats = FileHelper.GetFileFormats();
 
             saveFileDialog.InitialDirectory = Output.Directory;
             saveFileDialog.FileName = fileName;
@@ -123,14 +126,14 @@ namespace BS.Output.File
             List<string> filter = new List<string>();
             foreach (string filterFileFormat in fileFormats)
             {
-              string fileExtention = V3.FileHelper.GetFileExtention(filterFileFormat);
+              string fileExtention = FileHelper.GetFileExtention(filterFileFormat);
               filter.Add(filterFileFormat + "-File (*." + fileExtention + ")|*." + fileExtention);
             }
             saveFileDialog.Filter = string.Join("|", filter);
             saveFileDialog.FilterIndex = fileFormats.IndexOf(fileFormat) + 1;
 
             if (saveFileDialog.ShowDialog(Owner) != DialogResult.OK)
-              return new V3.SendResult(V3.Result.Canceled);
+              return new SendResult(Result.Canceled);
 
             fileFormat = fileFormats[saveFileDialog.FilterIndex - 1];
             filePath = saveFileDialog.FileName;
@@ -138,7 +141,7 @@ namespace BS.Output.File
           }
         }
 
-        Byte[] fileBytes = V3.FileHelper.GetFileBytes(fileFormat, ImageData);
+        Byte[] fileBytes = FileHelper.GetFileBytes(fileFormat, ImageData);
 
         using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
         {
@@ -146,12 +149,12 @@ namespace BS.Output.File
           file.Close();
         }
 
-        return new V3.SendResult(V3.Result.Success, filePath);
+        return new SendResult(Result.Success, filePath);
 
       }
       catch (Exception ex)
       {
-        return new V3.SendResult(V3.Result.Failed, ex.Message);
+        return new SendResult(Result.Failed, ex.Message);
       }
 
     }
