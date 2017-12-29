@@ -105,7 +105,7 @@ namespace BugShooting.Output.File
       {
 
         string fileFormat = Output.FileFormat;
-        string fileName = FileHelper.GetFileName(Output.FileName,  ImageData); ;
+        string fileName = AttributeHelper.ReplaceAttributes(Output.FileName,  ImageData); ;
         string filePath;
 
         if (Output.SaveAutomatically)
