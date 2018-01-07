@@ -110,7 +110,7 @@ namespace BugShooting.Output.File
 
         if (Output.SaveAutomatically)
         {
-          filePath = Path.Combine(Output.Directory, fileName + "." + FileHelper.GetFileExtention(fileFormat));
+          filePath = Path.Combine(Output.Directory, fileName + "." + FileHelper.GetFileExtension(fileFormat));
         }
         else
         {
@@ -118,7 +118,7 @@ namespace BugShooting.Output.File
           using (SaveFileDialog saveFileDialog = new SaveFileDialog())
           {
 
-            List<string> fileFormats = FileHelper.GetFileFormats();
+            List<string> fileFormats = new List<string>(FileHelper.GetFileFormats());
 
             saveFileDialog.InitialDirectory = Output.Directory;
             saveFileDialog.FileName = fileName;
@@ -126,7 +126,7 @@ namespace BugShooting.Output.File
             List<string> filter = new List<string>();
             foreach (string filterFileFormat in fileFormats)
             {
-              string fileExtention = FileHelper.GetFileExtention(filterFileFormat);
+              string fileExtention = FileHelper.GetFileExtension(filterFileFormat);
               filter.Add(filterFileFormat + "-File (*." + fileExtention + ")|*." + fileExtention);
             }
             saveFileDialog.Filter = string.Join("|", filter);
