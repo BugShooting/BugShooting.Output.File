@@ -1,4 +1,5 @@
 ﻿using BS.Plugin.V3.Output;
+using System;
 
 namespace BugShooting.Output.File
 {
@@ -9,19 +10,19 @@ namespace BugShooting.Output.File
     string name;
     string directory;
     string fileName;
-    string fileFormat;
+    Guid fileFormatID;
     bool saveAutomatically;
 
     public Output(string name,
                   string directory,
                   string fileName,
-                  string fileFormat,
+                  Guid fileFormatID,
                   bool saveAutomatically)
     {
       this.name = name;
       this.directory = directory;
       this.fileName = fileName;
-      this.fileFormat = fileFormat;
+      this.fileFormatID = fileFormatID;
       this.saveAutomatically = saveAutomatically;
     }
     
@@ -45,9 +46,9 @@ namespace BugShooting.Output.File
       get { return fileName; }
     }
 
-    public string FileFormat
+    public Guid FileFormatID
     {
-      get { return fileFormat; }
+      get { return fileFormatID; }
     }
 
     public bool SaveAutomatically

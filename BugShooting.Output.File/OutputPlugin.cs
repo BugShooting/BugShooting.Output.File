@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Threading.Tasks;
+﻿using BS.Plugin.V3.Common;
 using BS.Plugin.V3.Output;
-using BS.Plugin.V3.Common;
 using BS.Plugin.V3.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BugShooting.Output.File
 {
@@ -44,7 +45,7 @@ namespace BugShooting.Output.File
       Output output = new Output(Name,
                                  string.Empty,     
                                  "Screenshot",
-                                 String.Empty,
+                                 FileHelper.GetFileFormats().First().ID,
                                  false);
 
       return EditOutput(Owner, output);
@@ -65,7 +66,7 @@ namespace BugShooting.Output.File
         return new Output(edit.OutputName,
                           edit.Directory,
                           edit.FileName,
-                          edit.FileFormat,
+                          edit.FileFormatID,
                           edit.SaveAutomatically);
       }
       else
@@ -83,7 +84,7 @@ namespace BugShooting.Output.File
       outputValues.Add("Name", Output.Name);
       outputValues.Add("Directory", Output.Directory);
       outputValues.Add("FileName", Output.FileName);
-      outputValues.Add("FileFormat", Output.FileFormat);
+      outputValues.Add("FileFormatID", Output.FileFormatID.ToString());
       outputValues.Add("SaveAutomatically", Output.SaveAutomatically.ToString());
 
       return outputValues;
@@ -95,7 +96,7 @@ namespace BugShooting.Output.File
       return new Output(OutputValues["Name", this.Name],
                         OutputValues["Directory", ""],
                         OutputValues["FileName", "Screenshot"],
-                        OutputValues["FileFormat", ""],
+                        new Guid(OutputValues["FileFormatID", ""]),
                         Convert.ToBoolean(OutputValues["SaveAutomatically", false.ToString()]));
     }
 
@@ -104,13 +105,13 @@ namespace BugShooting.Output.File
       try
       {
 
-        string fileFormat = Output.FileFormat;
+        IFileFormat fileFormat = FileHelper.GetFileFormat(Output.FileFormatID);
         string fileName = AttributeHelper.ReplaceAttributes(Output.FileName,  ImageData); ;
         string filePath;
 
         if (Output.SaveAutomatically)
         {
-          filePath = Path.Combine(Output.Directory, fileName + "." + FileHelper.GetFileExtension(fileFormat));
+          filePath = Path.Combine(Output.Directory, fileName + "." + fileFormat.FileExtension);
         }
         else
         {
@@ -118,16 +119,15 @@ namespace BugShooting.Output.File
           using (SaveFileDialog saveFileDialog = new SaveFileDialog())
           {
 
-            List<string> fileFormats = new List<string>(FileHelper.GetFileFormats());
+            List<IFileFormat> fileFormats = new List<IFileFormat>(FileHelper.GetFileFormats());
 
             saveFileDialog.InitialDirectory = Output.Directory;
             saveFileDialog.FileName = fileName;
 
             List<string> filter = new List<string>();
-            foreach (string filterFileFormat in fileFormats)
+            foreach (IFileFormat filterFileFormat in fileFormats)
             {
-              string fileExtention = FileHelper.GetFileExtension(filterFileFormat);
-              filter.Add(filterFileFormat + "-File (*." + fileExtention + ")|*." + fileExtention);
+              filter.Add(filterFileFormat.Name + "-File (*." + filterFileFormat.FileExtension + ")|*." + filterFileFormat.FileExtension);
             }
             saveFileDialog.Filter = string.Join("|", filter);
             saveFileDialog.FilterIndex = fileFormats.IndexOf(fileFormat) + 1;
@@ -141,7 +141,7 @@ namespace BugShooting.Output.File
           }
         }
 
-        Byte[] fileBytes = FileHelper.GetFileBytes(fileFormat, ImageData);
+        Byte[] fileBytes = FileHelper.GetFileBytes(fileFormat.ID, ImageData);
 
         using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
         {
